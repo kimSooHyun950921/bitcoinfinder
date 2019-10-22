@@ -25,8 +25,8 @@ def check_bc(bc):
     return bcbytes[-4:] == sha256(sha256(bcbytes[:-4]).digest()).digest()[:4]
 
 
-def extract_wallet_address(sorce, result_set):
-    btc_find = False
+def extract_wallet_address(sorce):
+    bitcoin_list = set()
 
     # max length btc add math
     regex = re.compile("([13]{1}[A-HJ-NP-Za-km-z1-9]{25,33})")
@@ -35,9 +35,8 @@ def extract_wallet_address(sorce, result_set):
     if len(wallet_address_set) > 0:
         for wallet_address in wallet_address_set:
             if check_bc(wallet_address) is True:
-                btc_find = True
-                print("Find btc address : "+wallet_address)
-                result_set.append(wallet_address)
+#                print("Find btc address : "+wallet_address)
+                bitcoin_list.add(wallet_address)
     # min length btc add match
     regex_lazy = re.compile("([13]{1}[A-HJ-NP-Za-km-z1-9]{25,33}?)")
     wallet_address_set_lazy = regex_lazy.findall(sorce)
@@ -45,10 +44,9 @@ def extract_wallet_address(sorce, result_set):
     if len(wallet_address_set_lazy) > 0:
         for wallet_address in wallet_address_set_lazy:
             if check_bc(wallet_address) is True:
-                btc_find = True
-                print("Find btc address : "+wallet_address)
-                result_set.append(wallet_address)
-    return btc_find
+#                print("Find btc address : "+wallet_address)
+                bitcoin_list.add(wallet_address)
+    return bitcoin_list                                                                                                                                                                                                                                       
 
 
 def bitcoin_extracter(dir_route, dir_name):

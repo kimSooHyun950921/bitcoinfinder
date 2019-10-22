@@ -1,5 +1,6 @@
 import csv
 import bitcoin_address_extracter as bae
+import html_language_detector as hld
 import os
  
 def read_html(path):
@@ -22,15 +23,15 @@ def diff_category(html):
     pass
 
 
-def check_lang(html):
-    pass
+def check_lang(raw_html):
+    file_lang = hld.LanguageDetector(raw_html)
+    lang = file_lang.lang_detect()
+    return lang
 
 
-def extract_bitcoin(html):
-    with open(html) as html_file:
-      html_descriptor = html_file.read()
-
-      
+def extract_bitcoin(raw_html):
+      bitcoin_list = bae.extract_wallet_address(raw_html)
+      return bitcoin_list
 
 
 def get_onion_address(html):
@@ -48,12 +49,17 @@ def write_csv(html):
        
     pass
 
+
 def main(args):
     #TODO 1. html file 읽어오기
     #TODO 2. bitcoin 추출하기
     for html in read_html(args.html_path):
-      bit_address = extract_bitcoin(html)
-#      lang = check_lang(html)
+      with open(html) as html_file:
+        raw_html = html_file.read()
+        bit_address = extract_bitcoin(raw_html)
+        lang = check_lang(raw_html)
+
+        print(html.split('/')[-1], lang)
 #      category = diff_category(html)
 #      tag = make_tag(html)
 
@@ -66,6 +72,7 @@ if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument('--html-path','-p',
+                        required=True,
                         type=str,
                         help='input collected tor html file')
     args = parser.parse_args()
