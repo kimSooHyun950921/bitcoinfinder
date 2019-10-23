@@ -43,16 +43,20 @@ def get_onion_address(html):
     pass
  
 
-def write_csv(html):
+def write_csv(onion_add, lang, bit_address_list, tag):
     '''write_csv: 
        - input : html파일
        - output : data_numofbitcoin.csv
        - onion_address, bit, lang, category, tag
        - DB로 저장할 예정
     '''
-
-       
-    pass
+    with open('tag_result.csv', 'a', newline='') as csvfile:
+      fieldnames = ['bitcoin_address', 'language', 'onion_address', 'tag']
+      csvwriter = csv.DictWriter(csvfile, fieldnames=fieldnames)
+      csvwriter.writeheader()
+      for bitcoin in bit_address_list:
+        csvwriter.writerow({'bitcoin_address': bitcoin, 'language': lang, 
+                            'onion_address': onion_add, 'tag': tag})
 
 
 def main(args):
@@ -74,10 +78,9 @@ def main(args):
         print(html.split('/')[-1], lang, len(bit_address), tag)
         #category = diff_category(html)
 
-
-#      write_csv(bit_address, lang, category, tag)
+        write_csv(html.split('/')[-1], lang, bit_address, tag)
     #TODO 4. 카테고리 분류하기
-    print(count_bit_address, count_html)
+    print("count_bit_address:", count_bit_address, "count_html:", count_html)
 
 
 if __name__ == "__main__":
