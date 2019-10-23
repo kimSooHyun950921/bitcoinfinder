@@ -2,6 +2,7 @@ import csv
 import bitcoin_address_extracter as bae
 import html_language_detector as hld
 import os
+from bs4 import BeautifulSoup
  
 def read_html(path):
     with os.scandir(path) as it:
@@ -16,7 +17,11 @@ def read_html(path):
     
 
 def make_tag(html):
-    pass
+    try:
+      soup = BeautifulSoup(html)
+      return soup.title.string
+    except AttributeError as e:
+      return None
 
 
 def diff_category(html):
@@ -53,19 +58,26 @@ def write_csv(html):
 def main(args):
     #TODO 1. html file 읽어오기
     #TODO 2. bitcoin 추출하기
+    count_bit_address = 0
+    count_html = 0
+
     for html in read_html(args.html_path):
       with open(html) as html_file:
         raw_html = html_file.read()
         bit_address = extract_bitcoin(raw_html)
         lang = check_lang(raw_html)
 
-        print(html.split('/')[-1], lang)
-#      category = diff_category(html)
-#      tag = make_tag(html)
+        count_bit_address += len(bit_address)
+        count_html += 1
+
+        tag = make_tag(raw_html)
+        print(html.split('/')[-1], lang, len(bit_address), tag)
+        #category = diff_category(html)
+
 
 #      write_csv(bit_address, lang, category, tag)
-    #TODO 3. bitcoin이 있다면 , 언어 감지하기
     #TODO 4. 카테고리 분류하기
+    print(count_bit_address, count_html)
 
 
 if __name__ == "__main__":
