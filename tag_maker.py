@@ -3,7 +3,9 @@ import bitcoin_address_extracter as bae
 import html_language_detector as hld
 import os
 from bs4 import BeautifulSoup
- 
+from datetime import datetime
+
+
 def read_html(path):
     with os.scandir(path) as it:
       for folder in it:
@@ -14,8 +16,6 @@ def read_html(path):
               yield html_path
 
     
-    
-
 def make_tag(html):
     try:
       soup = BeautifulSoup(html)
@@ -50,10 +50,12 @@ def write_csv(onion_add, lang, bit_address_list, tag):
        - onion_address, bit, lang, category, tag
        - DB로 저장할 예정
     '''
-    with open('tag_result.csv', 'a', newline='') as csvfile:
+    csv_title = 'tag_{0}.csv'.\
+                format(str(datetime.now()).split(' ')[0])
+    with open(csv_title, 'a', newline='') as csvfile:
       fieldnames = ['bitcoin_address', 'language', 'onion_address', 'tag']
       csvwriter = csv.DictWriter(csvfile, fieldnames=fieldnames)
-      csvwriter.writeheader()
+
       for bitcoin in bit_address_list:
         csvwriter.writerow({'bitcoin_address': bitcoin, 'language': lang, 
                             'onion_address': onion_add, 'tag': tag})
